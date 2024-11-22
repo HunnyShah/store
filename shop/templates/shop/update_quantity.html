@@ -1,0 +1,34 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}Update Quantity{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+        <h1 class="text-3xl font-semibold text-center text-gray-800 mb-6">Update Quantity for
+            {{ cart_item.product.name }}
+        </h1>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- Quantity Input -->
+            <div class="mb-6">
+                <label for="id_quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
+                <input type="text" name="quantity" id="id_quantity"
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter quantity" required>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="mb-6">
+                <button type="submit"
+                    class="w-full py-3 bg-blue-500 text-white text-lg font-semibold rounded-md hover:bg-blue-600 transition duration-300">Update</button>
+            </div>
+        </form>
+
+        <!-- Back to Cart Link -->
+        <a href="{% url 'cart' %}" class="text-blue-500 text-center mt-4 inline-block">Back to Cart</a>
+    </div>
+</div>
+{% endblock %}

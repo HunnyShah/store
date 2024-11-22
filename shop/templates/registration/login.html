@@ -1,0 +1,44 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}Login - My Shop{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="w-full max-w-sm p-6 bg-white rounded-lg shadow-md">
+        <h1 class="text-3xl font-semibold text-center text-gray-800 mb-6">Login</h1>
+        <p class="text-center text-sm text-gray-500 mb-8">Enter your credentials to access your account</p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- Username Input -->
+            <div class="mb-6">
+                <label for="id_username" class="block text-sm font-medium text-gray-700">Username</label>
+                <input type="text" name="username" id="id_username"
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter your username" required>
+            </div>
+
+            <!-- Password Input -->
+            <div class="mb-6">
+                <label for="id_password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" name="password" id="id_password"
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter your password" required>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="mb-6">
+                <button type="submit"
+                    class="w-full py-3 bg-blue-500 text-white text-lg font-semibold rounded-md hover:bg-blue-600 transition duration-300">Login</button>
+            </div>
+
+            <!-- Sign-up Link -->
+            <div class="text-center text-sm text-gray-600">
+                <p>Don't have an account? <a href="{% url 'register' %}"
+                        class="text-blue-500 hover:text-blue-700">Register here</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

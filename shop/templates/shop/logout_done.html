@@ -1,0 +1,23 @@
+<!-- templates/shop/logout_done.html -->
+{% extends 'shop/base.html' %}
+
+{% block title %}Logout Successful{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-semibold text-center text-gray-800 mb-6">You have been logged out</h1>
+        <p class="text-center text-sm text-gray-500 mb-8">You have successfully logged out. Thank you for visiting!</p>
+
+        <div class="mb-6 text-center">
+            <a href="{% url 'login' %}"
+                class="w-full py-3 bg-blue-500 text-white text-lg font-semibold rounded-md hover:bg-blue-600 transition duration-300">Login
+                again</a>
+        </div>
+
+        <div class="text-center text-sm text-gray-600">
+            <p>Or go back to <a href="{% url 'home' %}" class="text-blue-500 hover:text-blue-700">home</a>.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

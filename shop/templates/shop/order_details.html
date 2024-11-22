@@ -1,0 +1,43 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}Order Details{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center mb-6">Order Details</h1>
+
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Order ID: {{ order.id }}</h2>
+        <p class="text-lg mb-4"><strong>Total Price:</strong> ${{ order.total_price }}</p>
+        <p class="text-lg mb-4"><strong>Placed At:</strong> {{ order.placed_at }}</p>
+
+        <h3 class="text-xl font-semibold mb-4">Items in this order:</h3>
+        <table class="table-auto w-full bg-white shadow-md rounded-lg">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="p-4 text-left">Product</th>
+                    <th class="p-4 text-center">Quantity</th>
+                    <th class="p-4 text-center">Price</th>
+                    <th class="p-4 text-center">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order_item in order.order_items.all %}
+                <tr class="border-b">
+                    <td class="p-4">{{ order_item.product.name }}</td>
+                    <td class="p-4 text-center">{{ order_item.quantity }}</td>
+                    <td class="p-4 text-center">${{ order_item.product.price }}</td>
+                    <td class="p-4 text-center">${{ order_item.get_total_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="mt-6">
+            <a href="{% url 'order_history' %}"
+                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300">Back to
+                Order History</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

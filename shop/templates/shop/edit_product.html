@@ -1,0 +1,73 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}Edit Product{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center mb-6">Edit Product</h1>
+
+    <div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Product Name -->
+            <div class="mb-4">
+                <label for="name" class="block text-lg font-semibold">Product Name</label>
+                <input type="text" id="name" name="name" class="w-full p-3 border border-gray-300 rounded-md"
+                    value="{{ form.name.value }}">
+                {% if form.name.errors %}
+                <ul class="text-red-500 text-sm mt-1">
+                    {% for error in form.name.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+
+            <!-- Price -->
+            <div class="mb-4">
+                <label for="price" class="block text-lg font-semibold">Price</label>
+                <input type="text" id="price" name="price" class="w-full p-3 border border-gray-300 rounded-md"
+                    value="{{ form.price.value }}">
+                {% if form.price.errors %}
+                <ul class="text-red-500 text-sm mt-1">
+                    {% for error in form.price.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+
+            <!-- Description -->
+            <div class="mb-4">
+                <label for="description" class="block text-lg font-semibold">Description</label>
+                <textarea id="description" name="description" rows="4"
+                    class="w-full p-3 border border-gray-300 rounded-md">{{ form.description.value }}</textarea>
+                {% if form.description.errors %}
+                <ul class="text-red-500 text-sm mt-1">
+                    {% for error in form.description.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+
+            <!-- Submit Button -->
+            <div class="mt-6 text-center">
+                <button type="submit"
+                    class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+
+        {% if messages %}
+        <div class="mt-4">
+            {% for message in messages %}
+            <div class="text-green-500">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

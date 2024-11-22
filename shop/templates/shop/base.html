@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Shop{% endblock %}</title>
+    <link href="{% static 'shop/css/output.css' %}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100">
+
+    <header class="bg-blue-600 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-white text-2xl font-bold">My Shop</h1>
+            <nav>
+                <ul class="flex space-x-4">
+                    <li><a href="{% url 'home' %}" class="text-white">Home</a></li>
+
+                    {% if user.is_authenticated %}
+                    <!-- Show Add Product, Cart, and Order History if logged in -->
+                    {% if user.is_staff %}
+                    <li><a href="{% url 'add_product' %}" class="text-white">Add Product</a></li>
+                    {% endif %}
+
+                    <li><a href="{% url 'cart' %}" class="text-white">
+                            Cart
+                            {% if total_items > 0 %}
+                            <span class="bg-red-600 text-white rounded-full px-2 py-1 text-sm ml-2">
+                                {{ total_items }}
+                            </span>
+                            {% endif %}
+                        </a></li>
+                    <li><a href="{% url 'order_history' %}" class="text-white">Order History</a></li>
+
+                    <!-- Show Logout if user is logged in -->
+                    <li>
+                        <form method="POST" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="text-white">
+                                Logout
+                            </button>
+                        </form>
+                    </li>
+                    {% else %}
+                    <!-- Show Login if user is not logged in -->
+                    <li><a href="{% url 'login' %}" class="text-white">Login</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+
+
+    <!-- Main Content Section -->
+    <main class="container mx-auto">
+        {% block content %}
+        <!-- Page specific content will go here -->
+        {% endblock %}
+    </main>
+
+
+</body>
+
+</html>

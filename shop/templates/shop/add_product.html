@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+    <link href="{% static 'shop/css/output.css' %}" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100">
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold text-center mb-6">Add a New Product</h1>
+
+        <div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="mb-4">
+                    <label for="name" class="block text-lg font-semibold">Product Name</label>
+                    <input type="text" id="name" name="name" class="w-full p-3 border border-gray-300 rounded-md"
+                        value="{{ form.name.value }}">
+                    {% if form.name.errors %}
+                    <ul class="text-red-500 text-sm mt-1">
+                        {% for error in form.name.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    <label for="price" class="block text-lg font-semibold">Price</label>
+                    <input type="text" id="price" name="price" class="w-full p-3 border border-gray-300 rounded-md"
+                        value="{{ form.price.value }}">
+                    {% if form.price.errors %}
+                    <ul class="text-red-500 text-sm mt-1">
+                        {% for error in form.price.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    <label for="description" class="block text-lg font-semibold">Description</label>
+                    <textarea id="description" name="description" rows="4"
+                        class="w-full p-3 border border-gray-300 rounded-md">{{ form.description.value }}</textarea>
+                    {% if form.description.errors %}
+                    <ul class="text-red-500 text-sm mt-1">
+                        {% for error in form.description.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <div class="mt-6 text-center">
+                    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-md">
+                        Add Product
+                    </button>
+                </div>
+
+            </form>
+
+            {% if messages %}
+            <div class="mt-4">
+                {% for message in messages %}
+                <div class="text-green-500">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+
+</html>
