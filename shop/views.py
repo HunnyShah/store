@@ -1,20 +1,32 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Product, Cart, CartItem, Order, OrderItem
+from .models import Product, Cart, CartItem, Order, OrderItem, ProductReview
 from .forms import ProductForm, UpdateQuantityForm
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
+from django.db.models import Exists, OuterRef, Subquery
+from django.db.models import Avg
+from django.urls import reverse_lazy
+from django.contrib.auth.views import LoginView
 
 def is_admin(user):
     return user.is_staff
 
+class CustomLoginView(LoginView):
+    def get_success_url(self):
+        return reverse_lazy('home')
+    
 def index(request):
     query = request.GET.get('q')  # Get the search query from the URL
     if query:
         products = Product.objects.filter(name__icontains=query)  # Search products by name
     else:
         products = Product.objects.all()  # Show all products if no query
+
+    products = products.annotate(average_rating=Avg('reviews__star'))
+
+    # Pass the products to the template
     return render(request, 'shop/homepage.html', {'products': products})
 
 def add_product(request):
@@ -131,11 +143,42 @@ def order_history(request):
     orders = Order.objects.filter(user=request.user).order_by('-placed_at')
     return render(request, 'shop/order_history.html', {'orders': orders})
 
-# View for displaying details of a specific order
+from django.db.models import Exists, OuterRef
+
 @login_required
 def order_details(request, id):
     order = get_object_or_404(Order, id=id)
-    return render(request, 'shop/order_details.html', {'order': order})
+
+    # Annotate each order item with whether the user has reviewed the product and its star rating
+    order_items = order.order_items.annotate(
+        has_review=Exists(
+            ProductReview.objects.filter(product=OuterRef('product'), user=request.user)
+        ),
+        review_star=Subquery(
+            ProductReview.objects.filter(
+                product=OuterRef('product'),
+                user=request.user
+            ).values('star')[:1]  # Get the first result (if any)
+        )
+    )
+
+    # Add reviews directly to the context for each order item
+    order_item_data = []
+    for item in order_items:
+        review = ProductReview.objects.filter(product=item.product, user=request.user).first()
+        order_item_data.append({
+            "product": item.product,
+            "quantity": item.quantity,
+            "price": item.product.price,
+            "total_price": item.get_total_price(),
+            "has_review": bool(review),
+            "review_star": review.star if review else "Not Rated",
+        })
+
+    return render(request, 'shop/order_details.html', {
+        'order': order,
+        'order_item_data': order_item_data,
+    })
 
 @user_passes_test(is_admin)
 def edit_product(request, product_id):
@@ -155,3 +198,28 @@ def delete_product(request, product_id):
     product.delete()
     messages.success(request, "Product deleted successfully!")
     return redirect('home')
+
+@login_required
+def product_review(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    review = ProductReview.objects.filter(product=product, user=request.user).first()
+
+    if request.method == "POST":
+        star_rating = request.POST.get('star')
+        # Update or create the review
+        review, created = ProductReview.objects.update_or_create(
+            product=product,
+            user=request.user,
+            defaults={'star': star_rating}
+        )
+        order_item = OrderItem.objects.filter(product=product, order__user=request.user).first()
+        if order_item:
+            order_id = order_item.order.id
+            return redirect('order_details', id=order_id)
+
+
+    return render(request, 'shop/product_review.html', {
+        'product': product,
+        'review': review,
+        'star_range': [i for i in range(1, 6)]  # Pass the range for 1-5 stars
+    })

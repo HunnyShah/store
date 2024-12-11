@@ -19,18 +19,33 @@
                     <th class="p-4 text-center">Quantity</th>
                     <th class="p-4 text-center">Price</th>
                     <th class="p-4 text-center">Total</th>
+                    <th class="p-4 text-center">Stars Given</th>
+                    <th class="p-4 text-center">Review</th>
                 </tr>
             </thead>
             <tbody>
-                {% for order_item in order.order_items.all %}
+                {% for item in order_item_data %}
                 <tr class="border-b">
-                    <td class="p-4">{{ order_item.product.name }}</td>
-                    <td class="p-4 text-center">{{ order_item.quantity }}</td>
-                    <td class="p-4 text-center">${{ order_item.product.price }}</td>
-                    <td class="p-4 text-center">${{ order_item.get_total_price }}</td>
+                    <td class="p-4">{{ item.product.name }}</td>
+                    <td class="p-4 text-center">{{ item.quantity }}</td>
+                    <td class="p-4 text-center">${{ item.price }}</td>
+                    <td class="p-4 text-center">${{ item.total_price }}</td>
+                    <td class="p-4 text-center">
+                        {{ item.review_star }}
+                    </td>
+                    <td class="p-4 text-center">
+                        <a href="{% url 'product_review' item.product.id %}" class="text-blue-500 hover:underline">
+                            {% if item.has_review %}
+                            Edit Review
+                            {% else %}
+                            Submit Review
+                            {% endif %}
+                        </a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
+
         </table>
 
         <div class="mt-6">

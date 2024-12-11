@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.db.models import Avg
 
 class Product(models.Model):
     name = models.CharField(max_length=255)
@@ -9,8 +9,26 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def average_rating(self):
+        # Calculate the average rating of all reviews for the product
+        reviews = self.reviews.all()
+        if reviews:
+            return reviews.aggregate(Avg('star'))['star__avg']
+        return None
 
+class ProductReview(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="reviews")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    star = models.PositiveIntegerField(
+        choices=[(i, f"{i} Star") for i in range(1, 6)],
+        default=5
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.star} Stars by {self.user.username} for {self.product.name}"
+    
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="cart")
     created_at = models.DateTimeField(auto_now_add=True)

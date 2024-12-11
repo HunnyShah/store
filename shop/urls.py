@@ -3,7 +3,7 @@ from . import views
 from django.contrib.auth.views import LoginView, LogoutView
 
 urlpatterns = [
-    path('login/', LoginView.as_view(), name='login'),
+ path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(next_page='logout_done'), name='logout'),
     path('logout/done/', views.logout_done, name='logout_done'),  # Redirect to the logout page after logging out,
     path('register/', views.register, name='register'),
@@ -20,4 +20,5 @@ urlpatterns = [
     path('order-details/<int:id>/', views.order_details, name='order_details'),
     path('edit/<int:product_id>/', views.edit_product, name='edit_product'),
     path('delete/<int:product_id>/', views.delete_product, name='delete_product'),
+    path('review/<int:product_id>/', views.product_review, name='product_review'),
 ]

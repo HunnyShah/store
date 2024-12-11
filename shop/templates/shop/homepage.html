@@ -38,6 +38,26 @@
                 <p class="text-gray-600 mt-2">${{ product.price }}</p>
                 <p class="text-sm text-gray-500 mt-2">{{ product.description|truncatewords:15 }}</p>
 
+                {% if product.average_rating %}
+                <div class="flex items-center mt-4">
+                    {% for i in "12345" %}
+                    {% if forloop.counter <= product.average_rating %} <svg xmlns="http://www.w3.org/2000/svg"
+                        width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M3.612 15.443c-.397.258-.895-.123-.812-.593l.85-4.944-3.604-3.509c-.351-.341-.168-.927.305-.993l4.952-.724L7.78.577a.535.535 0 0 1 .959 0l2.147 4.196 4.952.724c.473.066.656.651.305.993l-3.604 3.509.85 4.944c.083.47-.415.851-.812.593L8 12.439l-4.388 2.987z" />
+                        </svg>
+                        {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray"
+                            class="bi bi-star-fill" viewBox="0 0 16 16">
+                            <path
+                                d="M3.612 15.443c-.397.258-.895-.123-.812-.593l.85-4.944-3.604-3.509c-.351-.341-.168-.927.305-.993l4.952-.724L7.78.577a.535.535 0 0 1 .959 0l2.147 4.196 4.952.724c.473.066.656.651.305.993l-3.604 3.509.85 4.944c.083.47-.415.851-.812.593L8 12.439l-4.388 2.987z" />
+                        </svg>
+                        {% endif %}
+                        {% endfor %}
+                        <span class="ml-2 text-gray-600">({{ product.average_rating|floatformat:1 }})</span>
+                </div>
+                {% endif %}
+
                 <!-- Add to Cart Button -->
                 {% if user.is_authenticated %}
                 <a href="{% url 'add_to_cart' product.id %}"
