@@ -9,7 +9,8 @@
     <div class="bg-white shadow-md rounded-lg p-6">
         <h2 class="text-2xl font-semibold mb-4">Order ID: {{ order.id }}</h2>
         <p class="text-lg mb-4"><strong>Total Price:</strong> ${{ order.total_price }}</p>
-        <p class="text-lg mb-4"><strong>Placed At:</strong> {{ order.placed_at_est }}</p>
+        <p class="text-lg mb-4"><strong>Placed At:</strong> {{ placed_at_est|date:"Y-m-d H:i:s" }}</p>
+        <!-- Ensure this is passed correctly -->
 
         <h3 class="text-xl font-semibold mb-4">Items in this order:</h3>
         <table class="table-auto w-full bg-white shadow-md rounded-lg">

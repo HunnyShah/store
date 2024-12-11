@@ -164,8 +164,16 @@ from django.db.models import Exists, OuterRef
 def order_details(request, id):
     order = get_object_or_404(Order, id=id)
 
+    # Ensure the order's placed_at field is in UTC
+    utc_zone = pytz.utc
+    est_zone = pytz.timezone('US/Eastern')
+
+    # Convert placed_at to EST (it should be in UTC by default)
+    placed_at_est = order.placed_at.astimezone(est_zone)
+
     # Annotate each order item with whether the user has reviewed the product and its star rating
-    order_items = order.order_items.annotate(
+    order_items = order.order_items.all()
+    order_items = order_items.annotate(
         has_review=Exists(
             ProductReview.objects.filter(product=OuterRef('product'), user=request.user)
         ),
@@ -177,21 +185,22 @@ def order_details(request, id):
         )
     )
 
-    # Add reviews directly to the context for each order item
+    # Add annotated data directly to the context for each order item
     order_item_data = []
     for item in order_items:
-        review = ProductReview.objects.filter(product=item.product, user=request.user).first()
         order_item_data.append({
             "product": item.product,
             "quantity": item.quantity,
             "price": item.product.price,
             "total_price": item.get_total_price(),
-            "has_review": bool(review),
-            "review_star": review.star if review else "Not Rated",
+            "has_review": item.has_review,
+            "review_star": item.review_star if item.review_star is not None else "Not Rated",
         })
 
+    # Pass placed_at_est to the context
     return render(request, 'shop/order_details.html', {
         'order': order,
+        'placed_at_est': placed_at_est,  # Pass the EST datetime
         'order_item_data': order_item_data,
     })
 
