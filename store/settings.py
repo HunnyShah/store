@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from django.utils import timezone
+import pytz
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -113,6 +115,14 @@ USE_I18N = True
 
 USE_TZ = True
 
+
+# Convert UTC time to EST
+def convert_to_est(order_time):
+    est_tz = pytz.timezone('US/Eastern')
+    # Ensure the time is timezone-aware, then convert it to EST
+    if order_time.tzinfo is None:
+        order_time = timezone.make_aware(order_time, timezone.utc)  # Make it timezone-aware in UTC
+    return order_time.astimezone(est_tz)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/

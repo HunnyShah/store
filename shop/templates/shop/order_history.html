@@ -20,7 +20,7 @@
         <tr class="border-b">
             <td class="p-4">{{ order.id }}</td>
             <td class="p-4 text-center">${{ order.total_price }}</td>
-            <td class="p-4 text-center">{{ order.placed_at }}</td>
+            <td class="p-4 text-center">{{ order.created_at_est }}</td>
             <td class="p-4 text-center">
                 <a href="{% url 'order_details' order.id %}" class="text-blue-600">View Details</a>
             </td>

@@ -9,6 +9,8 @@ from django.db.models import Exists, OuterRef, Subquery
 from django.db.models import Avg
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
+from django.utils import timezone
+import pytz
 
 def is_admin(user):
     return user.is_staff
@@ -137,10 +139,23 @@ def place_order(request):
     # Redirect to the order history page
     return redirect('order_history')  # Change to your desired URL
 
+# Function to convert to EST
+def convert_to_est(order_time):
+    # Check if the order_time is naive (lacking timezone info), and make it aware
+    if timezone.is_naive(order_time):
+        order_time = timezone.make_aware(order_time, timezone.utc)
+    
+    # Convert to EST (Eastern Standard Time)
+    est_timezone = pytz.timezone('US/Eastern')
+    # Convert the time to the EST timezone and return the formatted string
+    return order_time.astimezone(est_timezone).strftime('%Y-%m-%d %H:%M:%S')  # Format to string
+
 # View for displaying order history
 @login_required
 def order_history(request):
     orders = Order.objects.filter(user=request.user).order_by('-placed_at')
+    for order in orders:
+       order.created_at_est = convert_to_est(order.placed_at)  # Convert created_at to EST
     return render(request, 'shop/order_history.html', {'orders': orders})
 
 from django.db.models import Exists, OuterRef
